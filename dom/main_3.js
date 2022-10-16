@@ -1,37 +1,37 @@
-// guardaremos todo dentro de un arreglo
-// acá usaremos .map en reemplazo del for
+// json.parse sirve para parsear el string generado 
+// las instrucciones de || [] son para que al consultarlo y no haya
+// datos, este devuelva un array vacío
 
-
-window.onload = () => {
-    const todos = [];
-    const form = document.getElementById('todo-form');
-    form.onsubmit = (e) => {
-        // e.prventDefatult() previene que se refresque la pantalla
-        e.preventDefault();
-        // luego vamos la campo de todo
-        const todo = document.getElementById('todo');
-        //guardamos el valor en un variable
-        //recordar que es un value y no un innerText
-        const todoText = todo.value;
-        //se reemplaza el valor por un valor vacío, 
-        // con el fin de que el input quede vacío o "refrescado"
-        todo.value = '';
-        todos.push(todoText)
-        const todoList = document.getElementById('todo-list');
-        const todosTemplate = todos.map(t => '<li>' + t + '</li>');
-        todoList.innerHTML = todosTemplate.join('');
-
-        const elementos = document.querySelectorAll('#todo-list li');
-        elementos.forEach((elemento, i) => {
-            console.log(elemento, i);
-            elemento.addEventListener('click', () =>{
-                elemento.parentNode.removeChild(elemento);
-                console.log(elemento, i);
-                todos.splice(i, 1)
+const todos = JSON.parse(localStorage.getItem('todos')) || [];
+const render = () => {
+    const todoList = document.getElementById('todo-list');
+    const todosTemplate = todos.map(t => '<li>' + t + '</li>');
+    todoList.innerHTML = todosTemplate.join('');
+    const elementos = document.querySelectorAll('#todo-list li');
+    elementos.forEach((elemento, i) => {
+        elemento.addEventListener('click', () =>{
+            elemento.parentNode.removeChild(elemento);
+            todos.splice(i, 1);
+            actualizaTodos(todos);
+            render();
             })
         })
+} 
+const actualizaTodos = (todos) => {
+    const todoString = JSON.stringify(todos);
+    localStorage.setItem('todos', todoString);
+}
+window.onload = () => {
+    render();
+    const form = document.getElementById('todo-form');
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        const todo = document.getElementById('todo');
+        const todoText = todo.value;
+        todo.value = '';
+        todos.push(todoText);
+        actualizaTodos(todos);
+        render();
         
-
     }
-
 }
