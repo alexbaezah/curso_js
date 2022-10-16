@@ -25,7 +25,9 @@ window.onload = () => {
         elementos.forEach((elemento, i) => {
             console.log(elemento, i);
             elemento.addEventListener('click', () =>{
-                console.log(elemento, i)
+                elemento.parentNode.removeChild(elemento);
+                console.log(elemento, i);
+                todos.splice(i, 1)
             })
         })
         
